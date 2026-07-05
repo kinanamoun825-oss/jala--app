@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>جالا — تسمعك كل شي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400..700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum:#2B1B33;
+    --plum-deep:#1C1122;
+    --cream:#FBF5EC;
+    --gold:#E8A94C;
+    --coral:#F2708A;
+    --ink:#241521;
+    --muted:#B9A6C4;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Tajawal', sans-serif;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(232,169,76,0.18), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(242,112,138,0.16), transparent 55%),
+      var(--plum-deep);
+    color:var(--cream);
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 16px 60px;
+  }
+  .lang-toggle{
+    align-self:flex-end;
+    display:flex;
+    gap:6px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:999px;
+    padding:4px;
+    margin-bottom:18px;
+  }
+  .lang-toggle button{
+    border:none;
+    background:transparent;
+    color:var(--muted);
+    font-family:'Tajawal';
+    font-size:13px;
+    padding:6px 14px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .lang-toggle button.active{
+    background:var(--gold);
+    color:var(--ink);
+    font-weight:700;
+  }
+  header{
+    text-align:center;
+    margin-bottom:22px;
+  }
+  .brand{
+    font-family:'Reem Kufi', sans-serif;
+    font-size:52px;
+    letter-spacing:1px;
+    background:linear-gradient(90deg, var(--gold), var(--coral));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    line-height:1.1;
+  }
+  .tagline{
+    color:var(--muted);
+    font-size:15px;
+    margin-top:6px;
+    font-weight:400;
+  }
+  .divider{
+    width:120px;
+    height:2px;
+    margin:18px auto 0;
+    background:linear-gradient(90deg, transparent, var(--gold), var(--coral), transparent);
+    border-radius:2px;
+  }
+  main{
+    width:100%;
+    max-width:520px;
+  }
+  .card{
+    background:rgba(251,245,236,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:22px;
+    padding:22px;
+    margin-top:18px;
+    backdrop-filter:blur(6px);
+  }
+  .drop{
+    border:2px dashed rgba(232,169,76,0.45);
+    border-radius:18px;
+    padding:34px 18px;
+    text-align:center;
+    cursor:pointer;
+    transition:.2s;
+    position:relative;
+  }
+  .drop:hover, .drop.drag{
+    border-color:var(--coral);
+    background:rgba(242,112,138,0.06);
+  }
+  .drop .orb{
+    width:64px;height:64px;
+    margin:0 auto 14px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--gold), var(--coral) 70%);
+    box-shadow:0 0 30px rgba(232,169,76,0.4);
+    position:relative;
+  }
+  .drop .orb::after{
+    content:"";
+    position:absolute; inset:-8px;
+    border-radius:50%;
+    border:1px solid rgba(232,169,76,0.4);
+    animation:pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%{transform:scale(0.9); opacity:.8;}
+    100%{transform:scale(1.5); opacity:0;}
+  }
+  .drop-title{font-weight:700; font-size:17px; margin-bottom:4px;}
+  .drop-sub{font-size:13px; color:var(--muted);}
+  input[type=file]{display:none;}
+
+  .status{
+    margin-top:14px;
+    font-size:13px;
+    color:var(--gold);
+    text-align:center;
+    min-height:18px;
+  }
+
+  .files{
+    margin-top:14px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .file-chip{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:14px;
+    padding:10px 14px;
+    font-size:13px;
+  }
+  .file-chip .name{color:var(--cream); font-weight:500;}
+  .file-chip .lang-tag{
+    font-size:11px;
+    padding:2px 9px;
+    border-radius:999px;
+    background:rgba(232,169,76,0.15);
+    color:var(--gold);
+    border:1px solid rgba(232,169,76,0.3);
+  }
+  .file-chip .lang-tag.en{
+    background:rgba(242,112,138,0.15);
+    color:var(--coral);
+    border-color:rgba(242,112,138,0.3);
+  }
+  .file-chip button.del{
+    background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;
+    margin-inline-start:8px;
+  }
+
+  .text-preview{
+    margin-top:16px;
+    max-height:180px;
+    overflow-y:auto;
+    background:rgba(0,0,0,0.18);
+    border-radius:14px;
+    padding:14px 16px;
+    font-size:14px;
+    line-height:1.9;
+    color:var(--cream);
+    white-space:pre-wrap;
+  }
+  .text-preview:empty::before{
+    content:"سيظهر هنا النص المستخرج من الملف...";
+    color:var(--muted);
+  }
+
+  .player{
+    margin-top:16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .player button{
+    flex:none;
+    width:52px;height:52px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    font-size:18px;
+    display:flex;align-items:center;justify-content:center;
+    transition:.15s;
+  }
+  .player .play{
+    background:linear-gradient(135deg, var(--gold), var(--coral));
+    color:var(--ink);
+    font-weight:700;
+  }
+  .player .play:active{transform:scale(.94);}
+  .player .stop{
+    background:rgba(255,255,255,0.08);
+    color:var(--cream);
+    border:1px solid rgba(255,255,255,0.12);
+  }
+  .speed-wrap{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    color:var(--muted);
+  }
+  input[type=range]{
+    flex:1;
+    accent-color:var(--coral);
+  }
+
+  .wave{
+    display:flex;
+    gap:4px;
+    align-items:flex-end;
+    height:22px;
+    margin-inline-start:6px;
+  }
+  .wave span{
+    width:3px;
+    background:var(--gold);
+    border-radius:2px;
+    height:6px;
+  }
+  .wave.playing span{ animation: bounce 0.9s ease-in-out infinite; }
+  .wave span:nth-child(1){animation-delay:0s;}
+  .wave span:nth-child(2){animation-delay:.15s;}
+  .wave span:nth-child(3){animation-delay:.3s;}
+  .wave span:nth-child(4){animation-delay:.45s;}
+  .wave span:nth-child(5){animation-delay:.6s;}
+  @keyframes bounce{
+    0%,100%{height:6px;}
+    50%{height:20px;}
+  }
+
+  footer{
+    margin-top:26px;
+    font-size:12px;
+    color:var(--muted);
+    text-align:center;
+  }
+
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-thumb{background:rgba(232,169,76,0.4); border-radius:4px;}
+
+  [dir="ltr"] body, .ltr-mode{direction:ltr;}
+</style>
+</head>
+<body id="body">
+
+<div class="lang-toggle" id="uiLangToggle">
+  <button data-ui="ar" class="active">عربي</button>
+  <button data-ui="en">English</button>
+</div>
+
+<header>
+  <div class="brand">جالا</div>
+  <div class="tagline" id="tagline">ارفقي صورة أو مستند... وخليها تحكيلك</div>
+  <div class="divider"></div>
+</header>
+
+<main>
+  <div class="card">
+    <label class="drop" id="dropZone">
+      <div class="orb"></div>
+      <div class="drop-title" id="dropTitle">اسحبي ملف هنا أو اضغطي للاختيار</div>
+      <div class="drop-sub" id="dropSub">صور (jpg, png) · PDF · Word (docx) · نص (txt)</div>
+      <input type="file" id="fileInput" accept=".png,.jpg,.jpeg,.webp,.pdf,.docx,.txt" multiple>
+    </label>
+
+    <div class="status" id="status"></div>
+    <div class="files" id="fileList"></div>
+    <div class="text-preview" id="textPreview"></div>
+
+    <div class="player">
+      <button class="play" id="playBtn" title="تشغيل">▶</button>
+      <button class="stop" id="stopBtn" title="إيقاف">■</button>
+      <div class="speed-wrap">
+        <span id="speedLabel">السرعة 1×</span>
+        <input type="range" id="speedRange" min="0.6" max="1.6" step="0.1" value="1">
+      </div>
+      <div class="wave" id="wave">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer id="footer">صُنع خصيصًا لجالا 💜</footer>
+
+<!-- Libraries: OCR, PDF text extraction, DOCX extraction -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const statusEl = document.getElementById('status');
+const fileListEl = document.getElementById('fileList');
+const textPreview = document.getElementById('textPreview');
+const playBtn = document.getElementById('playBtn');
+const stopBtn = document.getElementById('stopBtn');
+const speedRange = document.getElementById('speedRange');
+const speedLabel = document.getElementById('speedLabel');
+const wave = document.getElementById('wave');
+
+let currentText = "";
+let currentLang = "ar"; // detected content language
+let uiLang = "ar";
+let voicesCache = [];
+
+// ---------- UI language (interface only) ----------
+const strings = {
+  ar: {
+    tagline: "ارفقي صورة أو مستند... وخليها تحكيلك",
+    dropTitle: "اسحبي ملف هنا أو اضغطي للاختيار",
+    dropSub: "صور (jpg, png) · PDF · Word (docx) · نص (txt)",
+    footer: "صُنع خصيصًا لجالا 💜",
+    speed: "السرعة",
+    reading: "جاري القراءة، دقيقة...",
+    extracting: "جاري استخراج النص من الملف...",
+    done: "تم! اضغطي تشغيل للاستماع",
+    error: "صار في مشكلة، جربي ملف ثاني",
+    noText: "ما لقيت نص واضح بهالملف",
+  },
+  en: {
+    tagline: "Attach an image or document... and let it talk to you",
+    dropTitle: "Drop a file here or tap to choose",
+    dropSub: "Images (jpg, png) · PDF · Word (docx) · Text (txt)",
+    footer: "Made especially for Jala 💜",
+    speed: "Speed",
+    reading: "Reading, one moment...",
+    extracting: "Extracting text from the file...",
+    done: "Done! Tap play to listen",
+    error: "Something went wrong, try another file",
+    noText: "Couldn't find readable text in this file",
+  }
+};
+
+function setUiLang(lang){
+  uiLang = lang;
+  document.querySelectorAll('#uiLangToggle button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.ui === lang);
+  });
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.getElementById('tagline').textContent = strings[lang].tagline;
+  document.getElementById('dropTitle').textContent = strings[lang].dropTitle;
+  document.getElementById('dropSub').textContent = strings[lang].dropSub;
+  document.getElementById('footer').textContent = strings[lang].footer;
+  speedLabel.textContent = `${strings[lang].speed} ${speedRange.value}×`;
+}
+document.querySelectorAll('#uiLangToggle button').forEach(b=>{
+  b.addEventListener('click', ()=> setUiLang(b.dataset.ui));
+});
+
+// ---------- Drag & drop ----------
+['dragover','dragenter'].forEach(evt=>{
+  dropZone.addEventListener(evt, e=>{ e.preventDefault(); dropZone.classList.add('drag'); });
+});
+['dragleave','drop'].forEach(evt=>{
+  dropZone.addEventListener(evt, e=>{ e.preventDefault(); dropZone.classList.remove('drag'); });
+});
+dropZone.addEventListener('drop', e=>{
+  const files = e.dataTransfer.files;
+  if(files.length) handleFiles(files);
+});
+fileInput.addEventListener('change', e=>{
+  if(e.target.files.length) handleFiles(e.target.files);
+});
+
+function detectLanguage(text){
+  const arabicChars = (text.match(/[\u0600-\u06FF]/g) || []).length;
+  const latinChars = (text.match(/[A-Za-z]/g) || []).length;
+  return arabicChars >= latinChars ? 'ar' : 'en';
+}
+
+function addFileChip(name, lang){
+  const chip = document.createElement('div');
+  chip.className = 'file-chip';
+  chip.innerHTML = `<span class="name">${name}</span><span class="lang-tag ${lang==='en'?'en':''}">${lang==='ar'?'عربي':'English'}</span>`;
+  fileListEl.appendChild(chip);
+}
+
+async function handleFiles(fileArray){
+  statusEl.textContent = strings[uiLang].extracting;
+  fileListEl.innerHTML = "";
+  textPreview.textContent = "";
+  currentText = "";
+
+  for(const file of Array.from(fileArray)){
+    try{
+      let text = "";
+      const ext = file.name.split('.').pop().toLowerCase();
+
+      if(['png','jpg','jpeg','webp'].includes(ext)){
+        text = await ocrImage(file);
+      } else if(ext === 'pdf'){
+        text = await extractPdf(file);
+      } else if(ext === 'docx'){
+        text = await extractDocx(file);
+      } else if(ext === 'txt'){
+        text = await file.text();
+      } else {
+        continue;
+      }
+
+      text = (text || "").trim();
+      if(!text){
+        addFileChip(file.name, 'ar');
+        continue;
+      }
+      const lang = detectLanguage(text);
+      addFileChip(file.name, lang);
+      currentText += (currentText ? "\n\n" : "") + text;
+      currentLang = detectLanguage(currentText);
+    }catch(err){
+      console.error(err);
+      statusEl.textContent = strings[uiLang].error;
+    }
+  }
+
+  textPreview.textContent = currentText || strings[uiLang].noText;
+  statusEl.textContent = currentText ? strings[uiLang].done : strings[uiLang].noText;
+}
+
+async function ocrImage(file){
+  const { data } = await Tesseract.recognize(file, 'ara+eng', {
+    logger: m => {
+      if(m.status === 'recognizing text'){
+        statusEl.textContent = `${strings[uiLang].extracting} ${Math.round(m.progress*100)}%`;
+      }
+    }
+  });
+  return data.text;
+}
+
+async function extractPdf(file){
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+  let fullText = "";
+  for(let i=1; i<=pdf.numPages; i++){
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    fullText += content.items.map(it=>it.str).join(' ') + "\n";
+  }
+  return fullText;
+}
+
+async function extractDocx(file){
+  const buf = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({arrayBuffer: buf});
+  return result.value;
+}
+
+// ---------- Text to speech ----------
+function loadVoices(){
+  return new Promise(resolve=>{
+    let voices = speechSynthesis.getVoices();
+    if(voices.length){ resolve(voices); return; }
+    speechSynthesis.onvoiceschanged = ()=>{
+      resolve(speechSynthesis.getVoices());
+    };
+  });
+}
+
+function pickVoice(voices, lang){
+  const prefix = lang === 'ar' ? 'ar' : 'en';
+  return voices.find(v=>v.lang.toLowerCase().startsWith(prefix))
+      || voices.find(v=>v.lang.toLowerCase().includes(prefix))
+      || voices[0];
+}
+
+let utterance = null;
+
+playBtn.addEventListener('click', async ()=>{
+  if(!currentText){ statusEl.textContent = strings[uiLang].noText; return; }
+
+  if(speechSynthesis.speaking && !speechSynthesis.paused){
+    speechSynthesis.pause();
+    wave.classList.remove('playing');
+    playBtn.textContent = '▶';
+    return;
+  }
+  if(speechSynthesis.paused){
+    speechSynthesis.resume();
+    wave.classList.add('playing');
+    playBtn.textContent = '❚❚';
+    return;
+  }
+
+  const voices = await loadVoices();
+  utterance = new SpeechSynthesisUtterance(currentText);
+  utterance.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+  const voice = pickVoice(voices, currentLang);
+  if(voice) utterance.voice = voice;
+  utterance.rate = parseFloat(speedRange.value);
+
+  utterance.onstart = ()=>{
+    wave.classList.add('playing');
+    playBtn.textContent = '❚❚';
+    statusEl.textContent = strings[uiLang].reading;
+  };
+  utterance.onend = ()=>{
+    wave.classList.remove('playing');
+    playBtn.textContent = '▶';
+    statusEl.textContent = strings[uiLang].done;
+  };
+  utterance.onerror = ()=>{
+    wave.classList.remove('playing');
+    playBtn.textContent = '▶';
+  };
+
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utterance);
+});
+
+stopBtn.addEventListener('click', ()=>{
+  speechSynthesis.cancel();
+  wave.classList.remove('playing');
+  playBtn.textContent = '▶';
+});
+
+speedRange.addEventListener('input', ()=>{
+  speedLabel.textContent = `${strings[uiLang].speed} ${speedRange.value}×`;
+});
+
+setUiLang('ar');
+</script>
+</body>
+</html>
